@@ -54,7 +54,7 @@ export default function AttendanceChart() {
             attendance: count as number,
             fullDate: date
           }))
-          .sort((a, b) => new Date(a.fullDate) - new Date(b.fullDate))
+          .sort((a, b) => new Date(a.fullDate).getTime() - new Date(b.fullDate).getTime())
           .slice(-12); // Show last 12 data points
 
         console.log('Chart data:', chartData); // Debug log

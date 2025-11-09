@@ -1,5 +1,7 @@
 import { revalidatePath } from 'next/cache'
 import { supabase } from '@/lib/supabase'
+import { redirect } from 'next/navigation'
+import SuccessMessage from '../../components/SuccessMessage'
 
 interface Member {
   id: string
@@ -29,6 +31,7 @@ async function addMember(formData: FormData) {
   }
 
   revalidatePath('/admin')
+  redirect('/admin?success=member')
 }
 
 async function addService(formData: FormData) {
@@ -51,6 +54,7 @@ async function addService(formData: FormData) {
   }
 
   revalidatePath('/admin')
+  redirect('/admin?success=service')
 }
 
 async function getMembers(): Promise<Member[]> {
@@ -87,14 +91,24 @@ async function getServices(): Promise<Service[]> {
   return data || []
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ success?: string }> }) {
   const members = await getMembers()
   const services = await getServices()
+  const params = await searchParams
+  const success = params.success
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Admin - Manage Members & Services</h1>
+
+        {success === 'member' && (
+          <SuccessMessage message="Member added successfully!" />
+        )}
+
+        {success === 'service' && (
+          <SuccessMessage message="Service added successfully!" />
+        )}
 
         {/* Add New Member Form */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
